@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="./style.css">
+    <h1>Invernadero Inteligente 🧠</h1>
+</head>
+
+<body class="content">
+    <div class="sliders-container">
+        <h2>Control de Perifericos</h2>
+        <div class="light-control">
+            <p>Light Power: <span id="lightPowerValue">50</span>%</p>
+
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="50" class="slider" oninput="handleLightSlideBar(this.value)">
+            </div>
+        </div>
+
+        <div class="light-control">
+            <p>Fan Speed: <span id="fan_speed">50</span>%</p>
+
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="50" class="slider" oninput="handleFanSlideBar(this.value)">
+            </div>
+        </div>
+    <div>
+
+    <div class="task-container">
+        <h2>Control de Perifericos</h2>
+
+        <label for="taskDate">Birthday:</label>
+        <input type="date" id="taskDate" name="Task Excecution Date">
+
+        <label for="appt">Select a time:</label>
+        <input type="time" id="appt" name="appt">
+
+    </div>
+
+     <script src="./script.js"></script>
+</body>
+</html>
