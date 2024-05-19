@@ -10,6 +10,10 @@ X 5. Control de potencia de ventilador. X
 6. Programado de ciclos de temperatura e irrigado.
 X 7. Servidor web para control.
 
+Raspberry PI Os instalation
+
+buildroot iso
+
 2 sensores de temperatura 
 foco enciende cuando la temperatura es baja
 ventilador lo contrario, bruh

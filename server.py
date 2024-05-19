@@ -1,28 +1,20 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
-
 from pydantic import BaseModel
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.jobstores.memory import MemoryJobStore
-from loguru import logger
 
+from loguru import logger
 from typing import Annotated
 from datetime import datetime
 
 from models.RiegoModel import RiegoConfig
+
+# CONSTANTS
 from utils.database import db
 
-"""
-1. Encendido y apagado de sistema de irrigación.
-2. Desplegado de gráfica con historico de temperatura, irrigación y acciones tomadas.
-3. Control de temperatura del invernadero utilizando PID.
-4. Control de potencia del radiador (foco incandecente).
-5. Control de potencia de ventilador.
-6. Programado de ciclos de temperatura e irrigado.
-7. Servidor web para control.
-"""
+# from utils.DS18B20_Sensor import S0, S1
 
 scheduler = AsyncIOScheduler(timezone="America/Mexico_City")
 
@@ -102,6 +94,19 @@ def handle_fan_power_change(control: FanSpeed):
     return {"fan_speed": FAN_SPEED}
 
 
+def start_irrigation_routine(
+    hourminute: str,
+    duration: int,
+    min_temp: float,
+    max_temp: float,
+):
+
+    # TODO: Check temps limits
+    # TODO: Start irrigation until duration is done
+
+    pass
+
+
 @app.post("/riego_form")
 def handle_riego_config(
     request: Request,
@@ -110,24 +115,20 @@ def handle_riego_config(
     min_temp: Annotated[float, Form()],
     max_temp: Annotated[float, Form()],
 ):
-    """
-    /?hour-minute=12%3A12&duration=&min_temp=&max_temp= HTTP/1.1" 200 OK
-    """
+    db.add_irrigation_set(
+        hourminute,
+        duration,
+        min_temp,
+        max_temp,
+    )
 
-    # TODO: Add to datahase
-    # Add job to scheduler
-    # Confirm update
+    # TODO: Add job to scheduler
 
-    print(f"{hourminute=}")
-    print(f"{duration=}")
-    print(f"{min_temp=}")
-    print(f"{max_temp=}")
+    # Don't stay on /riego_form, return to /
+    response = RedirectResponse(url="/")
+    response.status_code = status.HTTP_303_SEE_OTHER
 
-    if hourminute is None or duration is None or min_temp is None or max_temp is None:
-        # Redirigir de vuelta al formulario con un mensaje de error
-        logger.warning("No data was submitted")
-
-    return get_template(request, "main")
+    return response
 
 
 def init_routine():
@@ -142,6 +143,7 @@ app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 
 def get_existing_tasks():
+    # TODO: Load data from database
     return test_data
 
 
