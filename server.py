@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.jobstores.memory import MemoryJobStore
-
 from loguru import logger
+
+from models.RiegoModel import RiegoConfig
+from utils.database import db
 
 """
 1. Encendido y apagado de sistema de irrigación.
@@ -28,13 +29,6 @@ class LightControl(BaseModel):
 
 class FanSpeed(BaseModel):
     value: int
-
-
-class RiegoConfig(BaseModel):
-    time: str  # HH:MM
-    duration: int  # Time on
-    min_temp: int
-    max_temp: int
 
 
 LIGHT_PWR = 50
@@ -79,10 +73,18 @@ def handle_fan_power_change(control: FanSpeed):
 
 @app.post("/riego_config")
 def handle_riego_config(data: RiegoConfig):
-    pass
     # TODO: Add to datahase
     # Add job to scheduler
     # Confirm update
+
+    pass
+
+
+def init_routine():
+    # Load routines to scheduler
+    # Create graphs
+
+    pass
 
 
 # Always at the end
