@@ -1,25 +1,3 @@
-// async function handleLightSlideBar() {
-//     // Handle light toggle
-//     try {
-//         let response = await fetch('/control_light', {
-//             method: 'post'
-//         });
-//
-//         if (response.ok) {
-//             let data = await response.json();
-//             let lightstate = data.light_state ? 'on' : 'off';
-//             document.getelementbyid('light-status').textcontent = 'light is ' + lightstate;
-//             alert('light toggled! light is now ' + lightstate);
-//         } else {
-//             alert('failed to toggle light.');
-//         }
-//
-//     } catch (error) {
-//         console.error('error:', error);
-//         alert('failed to toggle light due to network error.');
-//     }
-// }
-
 async function handleLightSlideBar(value){
     console.log(value)
 
@@ -78,4 +56,33 @@ async function handleFanSlideBar(value){
         console.error('error:', error);
         alert('failed to toggle fan speed due to network error.');
     }
+}
+
+function validateForm(event) {
+    console.log(event);
+
+    var hourminute = document.forms["irrigation_form"]["hourminute"].value;
+    var duration = document.forms["irrigation_form"]["duration"].value;
+    var min_temp = document.forms["irrigation_form"]["min_temp"].value;
+    var max_temp = document.forms["irrigation_form"]["max_temp"].value;
+
+    console.log(duration);
+
+
+    if (hourminute == "") {
+        alert("An hour:minute must be specified.");
+
+        event.preventDefault()
+        return false;
+    }
+
+    if (duration == "" || min_temp == "" || max_temp == "") {
+        console.log(duration);
+        alert("All input field must be filled out.");
+
+        event.preventDefault()
+        return false;
+    }
+
+    return true;
 }

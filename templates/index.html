@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
     <h1>Invernadero Inteligente 🧠</h1>
 </head>
 
@@ -9,18 +9,18 @@
     <div class="sliders-container">
         <h2>Control de Perifericos</h2>
         <div class="light-control">
-            <p>Light Power: <span id="lightPowerValue">50</span>%</p>
+                <p>Light Power: <span id="lightPowerValue">{{ light_percentage }}</span>%</p>
 
             <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="50" class="slider" oninput="handleLightSlideBar(this.value)">
+                    <input type="range" min="0" max="100" value="{{ light_percentage }}" class="slider" oninput="handleLightSlideBar(this.value)">
             </div>
         </div>
 
         <div class="light-control">
-            <p>Fan Speed: <span id="fan_speed">50</span>%</p>
+                <p>Fan Speed: <span id="fan_speed">{{ fan_speed }}</span>%</p>
 
             <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="50" class="slider" oninput="handleFanSlideBar(this.value)">
+                    <input type="range" min="0" max="100" value="{{ fan_speed }}" class="slider" oninput="handleFanSlideBar(this.value)">
             </div>
         </div>
     <div>
@@ -29,7 +29,23 @@
         <h2>Control de Ciclos</h2>
 
         <h3>Add an Irrigation Task</h3>
-        <form class="irrigation-adder" action="riego_form" method="POST" id="riego-form">
+        <table>
+            <tr>
+                <th>HH:MM</th>
+                <th>Duration</th>
+                <th>Min Temp</th>
+                <th>Max Temp</th>
+            </tr>
+
+            {% for task in existing_task %}
+                <tr> <td>{{ task.time }}</td>  <td>{{ task.duration }}</td> <td>{{ task.min_temp }}</td> <td>{{ task.max_temp }}</td> </tr>
+            {% endfor %}
+
+
+        </table>
+
+        <h3>Add an Irrigation Task</h3>
+        <form class="irrigation-adder" name="irrigation_form" action="riego_form" method="POST" id="riego-form" onsubmit="validateForm(event)">
 
             <label for="hourminute">Start HH:MM (24h):</label>
             <input type="time" id="hourminute" name="hourminute" step="60"><br>
@@ -59,6 +75,6 @@
          <img src="https://picsum.photos/200/300?grayscale" alt="graph" width="500" height="600"> 
     </div>
 
-     <script src="./script.js"></script>
+     <script src="{{ url_for('static', path='/script.js') }}"></script>
 </body>
 </html>
