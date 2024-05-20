@@ -6,7 +6,7 @@ from datetime import datetime
 # Configuración de los pines GPIO
 GPIO.setmode(GPIO.BCM)
 BombaAgua_PIN_10_MIN = 17  # Pin GPIO para BombaAgua que se enciende cada 10 minutos
-BombaAgua_LED_PIN_10_AM = 27   # Pin GPIO para el BombaAgua que se enciende a las 10 AM
+BombaAgua_PIN_10_AM = 27   # Pin GPIO para el BombaAgua que se enciende a las 10 AM
 
 GPIO.setup(BombaAgua_PIN_10_MIN, GPIO.OUT)
 GPIO.setup(BombaAgua_PIN_10_AM, GPIO.OUT)
