@@ -1,13 +1,13 @@
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
-MOTOR_PIN = 12
-GPIO.setup(MOTOR_PIN, GPIO.OUT)
+MOTOR_PIN = 19
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(MOTOR_PIN, GPIO.OUT)
 
 class Fan:
     def __init__(self):
-        self.pwm = GPIO.PWM(MOTOR_PIN, 100)  # Frecuencia de 100 Hz
+        self.pwm = GPIO.PWM(MOTOR_PIN, 1000)  # Frecuencia de 100 Hz
         self.pwm.start(100)
 
     def set_speed(self, speed: int):
