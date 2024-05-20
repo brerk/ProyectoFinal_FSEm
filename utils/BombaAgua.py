@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+from time import time
 
 GPIO.setmode(GPIO.BCM)
 
@@ -22,3 +23,7 @@ wp = WaterPump()
 
 if __name__ == "__main__":
     wp.turn_on()
+    
+    sleep(5)
+    
+    wp.discard()
