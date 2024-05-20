@@ -86,3 +86,30 @@ function validateForm(event) {
 
     return true;
 }
+
+function validateTempsForm(event) {
+    console.log(event);
+
+    var min_temp = document.forms["temps_form"]["min_temp"].value;
+    var max_temp = document.forms["temps_form"]["max_temp"].value;
+
+    console.log(min_temp);
+
+
+    if (min_temp == "" || max_temp == "") {
+        console.log(duration);
+        alert("All input field must be filled out.");
+
+        event.preventDefault()
+        return false;
+    }
+
+    if (parseInt(min_temp) >= parseInt(max_temp)) {
+        alert("Invalid temperatures, make sure min_temp is not higuer or equal to max_temp.");
+
+        event.preventDefault()
+        return false;
+    }
+
+    return true;
+}

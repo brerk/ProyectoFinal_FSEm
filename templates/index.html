@@ -2,10 +2,13 @@
 <html>
 <head>
     <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
-    <h1>Invernadero Inteligente 🧠</h1>
 </head>
 
 <body class="content">
+
+    <div class="left-panel">
+    <h1>Invernadero Inteligente 🧠</h1>
+
     <div class="sliders-container">
         <h2>Control de Perifericos</h2>
         <div class="light-control">
@@ -23,10 +26,30 @@
                     <input type="range" min="0" max="100" value="{{ fan_speed }}" class="slider" oninput="handleFanSlideBar(this.value)">
             </div>
         </div>
-    <div>
+    </div>
 
     <div class="task-container">
         <h2>Control de Ciclos</h2>
+
+        <h3>Set Temperature Limits</h3>
+
+        <p>Min Temp(°C): <span id="curr_min_temp">{{ curr_min_temp }}</span>°C</p> 
+        <p>Max Temp(°C): <span id="curr_max_temp">{{ curr_max_temp }}</span>°C</p>
+
+        <form class="Temp-Setter" name="temps_form" action="temps_form" method="POST" id="temps-form" onsubmit="validateTempsForm(event)">
+            <label for="min_temp">Min Temperature (°C):</label>
+            <input type="number" min="-10" max="99" id="min_temp" name="min_temp" placeholder="{{ curr_min_temp }}">
+            <br>
+
+            <label for="max_temp">Max Temperature (°C):</label>
+            <input type="number" min="-10" max="99" id="max_temp" name="max_temp" placeholder="{{ curr_max_temp }}">
+            <br>
+
+            <input type="submit" value="Set">
+        </form>
+
+        
+
 
         <h3>Add an Irrigation Task</h3>
         <table>
@@ -40,9 +63,9 @@
             {% for task in existing_task %}
                 <tr> <td>{{ task.time }}</td>  <td>{{ task.duration }}</td> <td>{{ task.min_temp }}</td> <td>{{ task.max_temp }}</td> </tr>
             {% endfor %}
-
-
         </table>
+
+
 
         <h3>Add an Irrigation Task</h3>
         <form class="irrigation-adder" name="irrigation_form" action="riego_form" method="POST" id="riego-form" onsubmit="validateForm(event)">
@@ -64,15 +87,17 @@
 
             <input type="submit" value="Add">
         </form>
-
+    </div>
 
     </div>
 
-    <div class="graphs-container">
-        <h2>Temperature</h2>
-         <img src="https://picsum.photos/200/300?grayscale" alt="graph" width="500" height="600"> 
-        <h2>Irrigation</h2>
-         <img src="https://picsum.photos/200/300?grayscale" alt="graph" width="500" height="600"> 
+    <div class="right-panel">
+        <div class="graphs-container">
+            <h2>Temperature</h2>
+             <img src="https://picsum.photos/200/300?grayscale" alt="graph" width="500" height="600"> 
+            <h2>Irrigation</h2>
+             <img src="https://picsum.photos/200/300?grayscale" alt="graph" width="500" height="600"> 
+        </div>
     </div>
 
      <script src="{{ url_for('static', path='/script.js') }}"></script>

@@ -37,8 +37,21 @@ Graficas con el historial de temperaturas y acciones tomadas.
 - Protoboard
 - Raspberry Pi 3B+ o Superior
 
-## Programado de ciclos de temperatura e irrigado
 
+# Install
 
+## Dependencies
 
+    python pip virtualenv 
 
+## Commands to clone and install python dependencies
+
+    git clone https://github.com/brerk/ProyectoFinal_FSEm.git
+    cd ProyectoFinal_FSem
+    virtualenv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+
+    fastapi run server.py
+
+In a browser open: `localhost:8000`

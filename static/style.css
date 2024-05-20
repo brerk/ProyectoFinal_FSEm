@@ -29,12 +29,25 @@
   cursor: pointer;
 }
 
-.content {
-  max-width: 500px;
-  margin: auto;
-}
-
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
+}
+
+table {
+  width: 100%;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 5%;
+}
+
+.left-panel, .right-panel {
+    width: 45%;
+}
+
+.sliders-container, .task-container {
+    margin-bottom: 20px;
 }
