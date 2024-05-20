@@ -22,6 +22,11 @@ class Fan:
 fan = Fan()
 
 if __name__ == "__main__":
-    while True:
-        speed = input("Input speed: ")
-        fan.set_speed(int(speed))
+    try:
+        while True:
+            speed = input("Input speed: ")
+            fan.set_speed(int(speed))
+    except KeyboardInterrupt:
+        print("Program terminated")
+    finally:
+        GPIO.cleanup()
