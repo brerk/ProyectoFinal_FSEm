@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 
-WaterPump_PIN = 17  # Pin GPIO para BombaAgua que se enciende cada 10 minutos
+WaterPump_PIN = 17
 
 GPIO.setup(WaterPump_PIN, GPIO.OUT)
 
@@ -19,3 +19,6 @@ class WaterPump:
 
 
 wp = WaterPump()
+
+if __name__ == "__main__":
+    wp.turn_on()
