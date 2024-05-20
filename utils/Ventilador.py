@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
-MOTOR_PIN = 27
+MOTOR_PIN = 12
 GPIO.setup(MOTOR_PIN, GPIO.OUT)
 
 
