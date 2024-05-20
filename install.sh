@@ -12,7 +12,7 @@ echo "Eable I2C mod"
 raspi-config nonint do_i2c 0
 
 echo "Installing system dependencies"
-apt-get install i2c-tools python3-smbus2 python3-pip virtualenv ufw git -y
+apt-get install i2c-tools python3-smbus2 python3-pip virtualenv ufw git python3-rpi.gpio -y
 adduser pi i2c
 
 modprobe w1-gpio

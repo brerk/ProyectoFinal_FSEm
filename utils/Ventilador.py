@@ -12,14 +12,16 @@ class Fan:
 
     def set_speed(self, speed: int):
         if speed < 0 or speed > 100:
+            print("speed is not on limits")
             return
 
         self.pwm.ChangeDutyCycle(speed)
+        print("pwm values changed to: ", speed)
 
 
 fan = Fan()
 
 if __name__ == "__main__":
     while True:
-        speed = input("Input speed")
+        speed = input("Input speed: ")
         fan.set_speed(int(speed))
