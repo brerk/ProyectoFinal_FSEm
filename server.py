@@ -4,7 +4,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import random
 import time
 
 from loguru import logger
@@ -211,10 +210,6 @@ def init_manager():
     #     pid_res = PID(Kp, Ki, Kd, setpoint, temp_reg["temp"])
     #     print(f"PID: {pid_res} for {temp_reg["temp"]} --> wanted {setpoint}")
 
-    # db.add_log_row("Start Irrigation", "Done")
-    # db.add_log_row("Stop Irrigation", "Done")
-    # db.add_log_row("S0 measurement in progress", "Done")
-    # db.add_log_row("S1 measurement in progress", "Done")
 
     s0_temps = db.get_temperatures(0)
     s1_temps = db.get_temperatures(0)
@@ -296,6 +291,11 @@ def start_irrigation_routine(
 
     wp.turn_off()
     logger.info("Irrigation routine is done.")
+
+
+@scheduler.scheduled_job("cron", second="*/15")
+def control_light():
+    pass
 
 
 @scheduler.scheduled_job("cron", second="*/15")
