@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 
-MOTOR_PIN = 19
+MOTOR_PIN = 12
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOTOR_PIN, GPIO.OUT)
