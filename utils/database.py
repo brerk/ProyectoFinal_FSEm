@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, func, update, select
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Table, Column, Integer, String, MetaData, Float, Time, DateTime
 
+from models.Log import Log
 from models.RiegoModel import RiegoConfig
 
 
@@ -53,7 +54,51 @@ class DataBase:
             Column("max_temp", Float),
         )
 
+        self.logs = Table(
+            "logs",
+            self.meta,
+            Column("id", Integer, primary_key=True, autoincrement=True),
+            Column("action", String),
+            Column("timestamp", type_=DateTime, server_default=func.now()),
+            Column("status", String),
+        )
+
         self.meta.create_all(self.engine)
+
+    def add_log_row(self, action: str, status: str):
+        session = self.SessionLocal()
+
+        try:
+            temp_data = {
+                "action": action,
+                "status": status,
+            }
+            session.execute(self.logs.insert().values(**temp_data))
+            session.commit()
+
+            return True
+        except Exception as e:
+            session.rollback()
+            print(f"Error occurred: {e}")
+            return False
+        finally:
+            session.close()
+
+    def get_logs(self, rows: int) -> Union[List[Log], None]:
+        session = self.SessionLocal()
+
+        try:
+            res = session.execute(self.logs.select().limit(rows))
+
+            if not res:
+                return []
+
+            return [Log(**row._asdict()) for row in res]
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            return None
+        finally:
+            session.close()
 
     def add_temperature_record(self, sensor_id: int, temp: float):
         session = self.SessionLocal()

@@ -97,7 +97,6 @@ function validateTempsForm(event) {
 
 
     if (min_temp == "" || max_temp == "") {
-        console.log(duration);
         alert("All input field must be filled out.");
 
         event.preventDefault()
@@ -113,3 +112,27 @@ function validateTempsForm(event) {
 
     return true;
 }
+
+function validateWantedTempForm(event) {
+    console.log(event);
+
+    var wanted_temp = document.forms["temps_form"]["wanted_temp"].value;
+
+    if (wanted_temp == "") {
+        alert("All input field must be filled out.");
+
+        event.preventDefault()
+        return false;
+    }
+
+    return true;
+}
+
+function actualizarImagen() {
+    const numeroAleatorio = Math.floor(Math.random() * 1000);
+    const nuevaUrlImagen = `/static/temps.jpg?cache=${numeroAleatorio}`;
+
+    document.getElementById('temps-graph').src = nuevaUrlImagen;
+}
+
+setInterval(actualizarImagen, 10000);

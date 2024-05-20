@@ -31,8 +31,19 @@
     <div class="task-container">
         <h2>Control de Ciclos</h2>
 
-        <h3>Set Temperature Limits</h3>
+        <h3>Set Temperature</h3>
+        <p>Wanted Temperature (°C): <span id="wanted_temp">{{ wanted_temp }}</span>°C</p> 
+        <p>Current Temperature (°C): <span id="curr_temp">{{ curr_temp }}</span>°C</p> 
 
+        <form class="Temp-Setter" name="wanted_temp_form" action="wanted_temp_form" method="POST" id="wanted_temp-form" onsubmit="validateWantedTempForm(event)">
+            <label for="max_temp">Temperature (°C):</label>
+            <input type="number" min="-10" max="99" id="wanted_temp" name="wanted_temp" placeholder="{{ wanted_temp }}">
+            <br>
+
+            <input type="submit" value="Set">
+        </form>
+
+        <h3>Set Temperature Limits</h3>
         <p>Min Temp(°C): <span id="curr_min_temp">{{ curr_min_temp }}</span>°C</p> 
         <p>Max Temp(°C): <span id="curr_max_temp">{{ curr_max_temp }}</span>°C</p>
 
@@ -47,9 +58,6 @@
 
             <input type="submit" value="Set">
         </form>
-
-        
-
 
         <h3>Add an Irrigation Task</h3>
         <table>
@@ -94,9 +102,20 @@
     <div class="right-panel">
         <div class="graphs-container">
             <h2>Temperature</h2>
-             <img src="https://picsum.photos/200/300?grayscale" alt="graph" width="500" height="600"> 
-            <h2>Irrigation</h2>
-             <img src="https://picsum.photos/200/300?grayscale" alt="graph" width="500" height="600"> 
+            <img src="/static/temps.jpg" id="temps-graph" alt="Temps Graph" width="640" height="480"> 
+
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                </tr>
+
+                {% for l in logs %}
+                    <tr> <td>{{ l.action }}</td>  <td>{{ l.timestamp }}</td> <td>{{ l.status }}</td> </tr>
+                {% endfor %}
+            </table>
+
         </div>
     </div>
 

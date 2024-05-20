@@ -16,6 +16,10 @@ from utils.PID import PID
 
 # CONSTANTS
 from utils.database import db
+from utils.Graphs import create_temps_graph
+
+# from utils.BombaAgua import wp
+# from utils.Ventilador import fan
 
 # from utils.DS18B20_Sensor import S0, S1
 from utils.PID import PID
@@ -39,6 +43,8 @@ FAN_SPEED = 50
 
 MIN_TEMP = 20
 MAX_TEMP = 25
+
+TEMP_WANTED = 25
 
 
 @app.post("/control_light")
@@ -127,6 +133,22 @@ def handle_temps_config(
     return response
 
 
+@app.post("/wanted_temp_form")
+def handle_wanted_temp(
+    request: Request,
+    wanted_temp: Annotated[float, Form()],
+):
+    global TEMP_WANTED
+
+    print(f"Wanted temp: {wanted_temp}")
+    TEMP_WANTED = wanted_temp
+
+    response = RedirectResponse(url="/")
+    response.status_code = status.HTTP_303_SEE_OTHER
+
+    return response
+
+
 # Always at the end
 app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
@@ -179,22 +201,26 @@ def init_manager():
 
     # TODO: K constanst can be calculated automatically from measurements
 
-    Kp = 2.0
-    Ki = 0.1
-    Kd = 1.0
-    setpoint = 25.0  # Temperatura deseada en grados Celsius
-    # measurement = 20.0  #
+    # Kp = 2.0
+    # Ki = 0.1
+    # Kd = 1.0
+    # setpoint = 25.0  # Temperatura deseada en grados Celsius
+    # # measurement = 20.0  #
 
-    for temp_reg in db.get_temperatures(0):
-        # print(temp_reg)
-        pid_res = PID(Kp, Ki, Kd, setpoint, temp_reg["temp"])
+    # for temp_reg in db.get_temperatures(0):
+    #     pid_res = PID(Kp, Ki, Kd, setpoint, temp_reg["temp"])
+    #     print(f"PID: {pid_res} for {temp_reg["temp"]} --> wanted {setpoint}")
 
-        print(f"PID: {pid_res} for {temp_reg["temp"]} --> wanted {setpoint}")
+    # db.add_log_row("Start Irrigation", "Done")
+    # db.add_log_row("Stop Irrigation", "Done")
+    # db.add_log_row("S0 measurement in progress", "Done")
+    # db.add_log_row("S1 measurement in progress", "Done")
 
-        # input()
+    s0_temps = db.get_temperatures(0)
+    s1_temps = db.get_temperatures(0)
 
-    # for temp_reg in db.get_temperatures(1):
-    #     print(temp_reg)
+    # TODO: Limit to a range of rows
+    create_temps_graph(s0_temps, s1_temps)
 
 
 def get_existing_tasks() -> List[RiegoConfig]:
@@ -204,7 +230,6 @@ def get_existing_tasks() -> List[RiegoConfig]:
     # TODO: Load data from database
 
     tasks = db.get_irrigation_tasks()
-    # print(tasks)
 
     return tasks
 
@@ -224,11 +249,27 @@ def get_template(request, name: str):
                     "existing_task": get_existing_tasks(),
                     "curr_min_temp": MIN_TEMP,
                     "curr_max_temp": MAX_TEMP,
+                    "wanted_temp": TEMP_WANTED,
+                    "curr_temp": get_current_temp(),
+                    "logs": db.get_logs(10),
                 },
             )
 
         case _:
             return None
+
+
+def get_current_temp() -> float:
+    # TODO: Pull data from sensors
+
+    # temp_prom = S0.read_temp()
+    # temp_prom += S1.read_temp()
+    #
+    # temp_prom /= 2
+    #
+    # return temp_prom
+
+    return 28.3
 
 
 def start_irrigation_routine(
@@ -240,7 +281,54 @@ def start_irrigation_routine(
     # TODO: Check temps limits
     # TODO: Start irrigation until duration is done
 
-    pass
+    curr_temp = get_current_temp()
 
+    if curr_temp < min_temp or curr_temp > max_temp:
+        logger.info(
+            f"Curr Temp {curr_temp} is not valid for temp limits {min_temp=} {max_temp=}, return."
+        )
+        return
+
+    wp.turn_on()
+    logger.info("Started irrigation routine.")
+
+    time.sleep(duration)
+
+    wp.turn_off()
+    logger.info("Irrigation routine is done.")
+
+
+@scheduler.scheduled_job("cron", second="*/15")
+def generat_graphs():
+    s0_temps = db.get_temperatures(0)
+    s1_temps = db.get_temperatures(0)
+
+    create_temps_graph(s0_temps, s1_temps)
+
+    db.add_log_row("Graph update", "Done")
+
+    logger.info("Graphs updated to ./statics/temps.jpg")
+
+
+@scheduler.scheduled_job("cron", second="*/5")
+def measure_temps():
+    """
+    Read temperatures from S0 y S0 and store to db
+    """
+    # TODO: uncomment when 1Wire sensors are connected
+    # s0_temp = S0.read_temp()
+    # s1_temp = S1.read_temp()
+
+    s0_temp = 23.1
+    s1_temp = 23.4
+
+    db.add_temperature_record(sensor_id=0, temp=s0_temp)
+    db.add_temperature_record(sensor_id=1, temp=s1_temp)
+
+    db.add_log_row("Temp measurement of S0,S1", "Done")
+    logger.info("Temps measured")
+
+
+scheduler.start()
 
 init_manager()
