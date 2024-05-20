@@ -1,0 +1,14 @@
+[Unit]
+Description=Invernadero Inteligente 
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/user/ProyectoFinal_FSEm
+Environment=PYTHONPATH=/home/pi/ProyectoFinal_FSEm/venv
+ExecStart=/home/rpi/ProyectoFinal_FSEm/venv/bin/python server.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
