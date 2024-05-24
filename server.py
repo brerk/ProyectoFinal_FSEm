@@ -43,7 +43,7 @@ FAN_SPEED = 50
 MIN_TEMP = 20
 MAX_TEMP = 25
 
-TEMP_WANTED = 25
+DESIRED_TEMP = 25
 
 
 @app.post("/control_light")
@@ -137,10 +137,10 @@ def handle_wanted_temp(
     request: Request,
     wanted_temp: Annotated[float, Form()],
 ):
-    global TEMP_WANTED
+    global DESIRED_TEMP
 
     print(f"Wanted temp: {wanted_temp}")
-    TEMP_WANTED = wanted_temp
+    DESIRED_TEMP = wanted_temp
 
     response = RedirectResponse(url="/")
     response.status_code = status.HTTP_303_SEE_OTHER
@@ -157,7 +157,7 @@ async def read_item(request: Request):
     return get_template(request, "main")
 
 
-def init_manager():
+def init_routine():
     """
     Init secuence, load config to memory and creates graphics if enought data is stored
     """
@@ -173,43 +173,6 @@ def init_manager():
 
     # TODO: Load routines to scheduler
     # Create graphs
-
-    # for _ in range(10):
-    #     db.add_temperature_record(sensor_id=0, temp=random.random() * 100)
-    #     time.sleep(1)
-    #
-    # for _ in range(10):
-    #     db.add_temperature_record(sensor_id=1, temp=random.random() * 100)
-    #     time.sleep(1)
-
-    """
-    Pasos para ajustar valores
-
-    Kp:
-        respuesta es lenta, aumenta Kp
-        respuesta es rapida y oscila, reduce Kp
-
-    Ki:
-        error estable (temp doesn't reach setpoint), aumenta Ki
-        respuesta inestable, reduce Ki
-
-    Kd:
-        oscilaciones rapida, aumenta Kd
-        respuesta muy lenta, reduce Kd
-    """
-
-    # TODO: K constanst can be calculated automatically from measurements
-
-    # Kp = 2.0
-    # Ki = 0.1
-    # Kd = 1.0
-    # setpoint = 25.0  # Temperatura deseada en grados Celsius
-    # # measurement = 20.0  #
-
-    # for temp_reg in db.get_temperatures(0):
-    #     pid_res = PID(Kp, Ki, Kd, setpoint, temp_reg["temp"])
-    #     print(f"PID: {pid_res} for {temp_reg["temp"]} --> wanted {setpoint}")
-
 
     s0_temps = db.get_temperatures(0)
     s1_temps = db.get_temperatures(0)
@@ -244,7 +207,7 @@ def get_template(request, name: str):
                     "existing_task": get_existing_tasks(),
                     "curr_min_temp": MIN_TEMP,
                     "curr_max_temp": MAX_TEMP,
-                    "wanted_temp": TEMP_WANTED,
+                    "wanted_temp": DESIRED_TEMP,
                     "curr_temp": get_current_temp(),
                     "logs": db.get_logs(10),
                 },
@@ -255,6 +218,10 @@ def get_template(request, name: str):
 
 
 def get_current_temp() -> float:
+    """
+    Return prom of s0 + s1
+    """
+
     # TODO: Pull data from sensors
 
     # temp_prom = S0.read_temp()
@@ -273,9 +240,6 @@ def start_irrigation_routine(
     min_temp: float,
     max_temp: float,
 ):
-    # TODO: Check temps limits
-    # TODO: Start irrigation until duration is done
-
     curr_temp = get_current_temp()
 
     if curr_temp < min_temp or curr_temp > max_temp:
@@ -295,7 +259,38 @@ def start_irrigation_routine(
 
 @scheduler.scheduled_job("cron", second="*/15")
 def control_light():
-    pass
+    """
+    Adjust light power using the PID
+
+    """
+
+    """
+    Pasos para ajustar valores
+
+    Kp:
+        respuesta es lenta, aumenta Kp
+        respuesta es rapida y oscila, reduce Kp
+
+    Ki:
+        error estable (temp doesn't reach setpoint), aumenta Ki
+        respuesta inestable, reduce Ki
+
+    Kd:
+        oscilaciones rapida, aumenta Kd
+        respuesta muy lenta, reduce Kd
+    """
+
+    # TODO: K constanst can be calculated automatically from measurements
+
+    Kp = 1
+    Ki = 0.1 * Kp
+    Kd = 0.1 * Ki
+
+    current_temp = get_current_temp()
+
+    pid_res = PID(Kp, Ki, Kd, DESIRED_TEMP, current_temp)
+    print(f"PID: {pid_res} for {current_temp} --> wanted {DESIRED_TEMP}")
+    
 
 
 @scheduler.scheduled_job("cron", second="*/15")
@@ -313,7 +308,7 @@ def generat_graphs():
 @scheduler.scheduled_job("cron", second="*/5")
 def measure_temps():
     """
-    Read temperatures from S0 y S0 and store to db
+    Read temperature from S0 y S0 and write to db.
     """
     # TODO: uncomment when 1Wire sensors are connected
     # s0_temp = S0.read_temp()
@@ -331,4 +326,4 @@ def measure_temps():
 
 scheduler.start()
 
-init_manager()
+init_routine()

@@ -60,3 +60,10 @@ class TempSensor:
 
 S0 = TempSensor(device_folders[0] + "/w1_slave")
 S1 = TempSensor(device_folders[1] + "/w1_slave")
+
+
+if __name__ == "__main__":
+    while True:
+        print(f"S0 --> {S0.read_temp()}, S1 --> {S1.read_temp()}")
+
+        time.sleep(1)

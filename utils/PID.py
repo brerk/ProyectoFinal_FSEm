@@ -71,9 +71,25 @@ def PID(Kp, Ki, Kd, setpoint: float, measurement: float, offset=5) -> float:
     return MV
 
 
-if __name__ == "__main__":
+def fill_db_with_fake_measurements():
     for _ in range(10):
         db.add_temperature_record(sensor_id=0, temp=random.random() * 100)
 
     for _ in range(10):
         db.add_temperature_record(sensor_id=1, temp=random.random() * 100)
+
+
+if __name__ == "__main__":
+    fill_db_with_fake_measurements()
+
+    Kp = 2.0
+    Ki = 0.1
+    Kd = 1.0
+    setpoint = 25.0  # Temperatura deseada en grados Celsius
+    measurement = 20.0  #
+
+    pid_res = PID(Kp, Ki, Kd, setpoint, measurement)
+
+    print(f"PID result -> {pid_res}")
+
+

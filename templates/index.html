@@ -7,12 +7,12 @@
 <body class="content">
 
     <div class="left-panel">
-    <h1>Invernadero Inteligente 🧠</h1>
+    <h1>Invernaderoe Inteligente 🧠</h1>
 
     <div class="sliders-container">
         <h2>Control de Perifericos</h2>
         <div class="light-control">
-                <p>Light Power: <span id="lightPowerValue">{{ light_percentage }}</span>%</p>
+                <p>💡 Luminosidad del Foco: <span id="lightPowerValue">{{ light_percentage }}</span>%</p>
 
             <div class="slidecontainer">
                     <input type="range" min="0" max="100" value="{{ light_percentage }}" class="slider" oninput="handleLightSlideBar(this.value)">
@@ -20,7 +20,7 @@
         </div>
 
         <div class="light-control">
-                <p>Fan Speed: <span id="fan_speed">{{ fan_speed }}</span>%</p>
+                <p>🌬️ Velocidad del ventilador: <span id="fan_speed">{{ fan_speed }}</span>%</p>
 
             <div class="slidecontainer">
                     <input type="range" min="0" max="100" value="{{ fan_speed }}" class="slider" oninput="handleFanSlideBar(this.value)">
@@ -29,43 +29,43 @@
     </div>
 
     <div class="task-container">
-        <h2>Control de Ciclos</h2>
+        <h2>Control de Temperatura</h2>
 
-        <h3>Set Temperature</h3>
-        <p>Wanted Temperature (°C): <span id="wanted_temp">{{ wanted_temp }}</span>°C</p> 
-        <p>Current Temperature (°C): <span id="curr_temp">{{ curr_temp }}</span>°C</p> 
+        <h3>Modificar Temperatura</h3>
+        <p>Temperatura Deseada (°C): <span id="wanted_temp">{{ wanted_temp }}</span>°C</p> 
+        <p>Temperatura Actual (°C): <span id="curr_temp">{{ curr_temp }}</span>°C</p> 
 
         <form class="Temp-Setter" name="wanted_temp_form" action="wanted_temp_form" method="POST" id="wanted_temp-form" onsubmit="validateWantedTempForm(event)">
-            <label for="max_temp">Temperature (°C):</label>
+            <label for="max_temp">Cambiar Temperatura Deseada (°C):</label>
             <input type="number" min="-10" max="99" id="wanted_temp" name="wanted_temp" placeholder="{{ wanted_temp }}">
             <br>
 
             <input type="submit" value="Set">
         </form>
 
-        <h3>Set Temperature Limits</h3>
-        <p>Min Temp(°C): <span id="curr_min_temp">{{ curr_min_temp }}</span>°C</p> 
-        <p>Max Temp(°C): <span id="curr_max_temp">{{ curr_max_temp }}</span>°C</p>
+        <h3>Modifcar limites de Temperatura</h3>
+        <p> Temperatura Mínima (°C): <span id="curr_min_temp">{{ curr_min_temp }}</span>°C</p> 
+        <p> Temperatura Máxima (°C): <span id="curr_max_temp">{{ curr_max_temp }}</span>°C</p>
 
         <form class="Temp-Setter" name="temps_form" action="temps_form" method="POST" id="temps-form" onsubmit="validateTempsForm(event)">
-            <label for="min_temp">Min Temperature (°C):</label>
+            <label for="min_temp">Temperatura Mínima (°C):</label>
             <input type="number" min="-10" max="99" id="min_temp" name="min_temp" placeholder="{{ curr_min_temp }}">
             <br>
 
-            <label for="max_temp">Max Temperature (°C):</label>
+            <label for="max_temp">Temperatura Máxima (°C):</label>
             <input type="number" min="-10" max="99" id="max_temp" name="max_temp" placeholder="{{ curr_max_temp }}">
             <br>
 
             <input type="submit" value="Set">
         </form>
 
-        <h3>Add an Irrigation Task</h3>
+        <h3> 🚰 Ciclos de regado</h3>
         <table>
             <tr>
                 <th>HH:MM</th>
-                <th>Duration</th>
-                <th>Min Temp</th>
-                <th>Max Temp</th>
+                <th>Duración (s)</th>
+                <th>Min Temp (°C)</th>
+                <th>Max Temp (°C)</th>
             </tr>
 
             {% for task in existing_task %}
@@ -75,21 +75,21 @@
 
 
 
-        <h3>Add an Irrigation Task</h3>
+        <h3>Añadir Tarea de Irrigación</h3>
         <form class="irrigation-adder" name="irrigation_form" action="riego_form" method="POST" id="riego-form" onsubmit="validateForm(event)">
 
-            <label for="hourminute">Start HH:MM (24h):</label>
+            <label for="hourminute">Hora de Inicio (24h):</label>
             <input type="time" id="hourminute" name="hourminute" step="60"><br>
 
-            <label for="duration">Duration (seconds):</label>
+            <label for="duration">Duración (seconds):</label>
             <input type="number" min="1" max="3600" id="duration" name="duration" placeholder="30">
             <br>
 
-            <label for="min_temp">Min Temperature (°C):</label>
+            <label for="min_temp">Temperatura Mínima (°C):</label>
             <input type="number" min="-10" max="99" id="min_temp" name="min_temp" placeholder="20">
             <br>
 
-            <label for="max_temp">Max Temperature (°C):</label>
+            <label for="max_temp">Temperatura Máxima (°C):</label>
             <input type="number" min="-10" max="99" id="max_temp" name="max_temp" placeholder="35">
             <br>
 
@@ -101,14 +101,14 @@
 
     <div class="right-panel">
         <div class="graphs-container">
-            <h2>Temperature</h2>
+            <h2>Gráficas</h2>
             <img src="/static/temps.jpg" id="temps-graph" alt="Temps Graph" width="640" height="480"> 
 
             <table>
                 <tr>
-                    <th>Action</th>
+                    <th>Acción</th>
                     <th>Timestamp</th>
-                    <th>Status</th>
+                    <th>Estado</th>
                 </tr>
 
                 {% for l in logs %}
