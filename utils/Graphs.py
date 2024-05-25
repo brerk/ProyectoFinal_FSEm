@@ -1,6 +1,20 @@
-import matplotlib.pyplot as plt
+# Graph: Creates a graph using previous temperature measurements.
+# Copyright (C) 2024  Erik Bravo
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# import numpy as np
+import matplotlib.pyplot as plt
 
 
 def create_temps_graph(
@@ -18,10 +32,6 @@ def create_temps_graph(
     s1_x = [row["timestamp"] for row in s1_temps]
     s1_y = [row["temp"] for row in s1_temps]
 
-    # print(f"{len(temps_prom_x)=} {len(temps_prom_y)=}")
-    # print(f"{len(s0_x)=} {len(s0_y)=}")
-    # print(f"{len(s1_x)=} {len(s1_y)=}")
-
     fig, ax = plt.subplots()
 
     ax.plot(temps_prom_x, temps_prom_y, marker="*", linewidth=1.0, label="Prom")
@@ -35,4 +45,4 @@ def create_temps_graph(
     plt.grid()
     plt.legend()
 
-    plt.savefig("./static/temps.jpg")
+    plt.savefig(output)

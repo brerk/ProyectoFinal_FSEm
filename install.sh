@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Install Script: Prepares the rasbpberry and install the smart greenhouse.
+# Copyright (C) 2024  Erik Bravo
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 if [ "$EUID" -ne 0 ]
 then echo "Script must be run as root. (try sudo su?)"
   exit
@@ -57,3 +73,8 @@ EOF
 
 systemctl daemon-reload
 systemctl enable --now inveradero.service
+
+echo "Smart Greenhouse installed, it will be available on the next system startup on http://localhost:8000"
+echo "Now, restar the system with 'reboot'"
+
+

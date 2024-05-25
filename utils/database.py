@@ -1,5 +1,19 @@
-# from datetime import datetime
-import datetime
+# DataBase: Implement a db to store temperatures and persistent jobs
+# Copyright (C) 2024  Erik Bravo
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from typing import List, Union
 from sqlalchemy import create_engine, func, update, select
 

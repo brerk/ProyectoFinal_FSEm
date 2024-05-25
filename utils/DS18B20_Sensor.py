@@ -1,4 +1,20 @@
-# import os
+# DS18B20_Sensor: Reads temperatures from digital sensor
+# Copyright (C) 2024  Erik Bravo
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
 import glob
 import time
 from typing import Union
@@ -44,19 +60,6 @@ class TempSensor:
 
         return None
 
-
-# if __name__ == "__main__":
-#     while True:
-#         temp_c = read_temp()
-#
-#         if not temp_c:
-#             print("Couldn't read temperature from file.")
-#             continue
-#
-#         # print(f"Temperature --> C: {temp_c:3.3f}, F: {temp_f:3.3f}")
-#         print(f"Temperature --> C: {temp_c:3.3f}")
-#
-#         time.sleep(1)
 
 S0 = TempSensor(device_folders[0] + "/w1_slave")
 S1 = TempSensor(device_folders[1] + "/w1_slave")

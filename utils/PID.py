@@ -1,3 +1,20 @@
+# PID Controls the light power using Proportional gain + integral gain + derivative gain to keep temperature on setpoint
+# Copyright (C) 2024  Erik Bravo
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
 import time
 import random
 from utils.database import db
@@ -91,5 +108,3 @@ if __name__ == "__main__":
     pid_res = PID(Kp, Ki, Kd, setpoint, measurement)
 
     print(f"PID result -> {pid_res}")
-
-

@@ -1,3 +1,20 @@
+# Smart Greenhouse using a raspberry pi 4 + arduino one + web interface
+# Copyright (C) 2024  Erik Bravo
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
 from fastapi import FastAPI, Form, Request, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -162,6 +179,7 @@ def init_routine():
     Init secuence, load config to memory and creates graphics if enought data is stored
     """
     global MIN_TEMP, MAX_TEMP
+
     temps = db.get_temp_limits()
 
     if not temps:
@@ -290,7 +308,6 @@ def control_light():
 
     pid_res = PID(Kp, Ki, Kd, DESIRED_TEMP, current_temp)
     print(f"PID: {pid_res} for {current_temp} --> wanted {DESIRED_TEMP}")
-    
 
 
 @scheduler.scheduled_job("cron", second="*/15")
