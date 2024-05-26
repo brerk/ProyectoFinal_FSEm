@@ -10,7 +10,6 @@ X 5. Control de potencia de ventilador. X
 6. Programado de ciclos de temperatura e irrigado.
 X 7. Servidor web para control.
 
-Raspberry PI Os instalation
 
 buildroot iso
 
@@ -19,9 +18,6 @@ foco enciende cuando la temperatura es baja
 ventilador lo contrario, bruh
 sistema de irrigación: bomba de agua de baja potencia
 
-Graficas con el historial de temperaturas y acciones tomadas.
-
-¿ PID ?
 
 ## Material
 - Socket para foco
@@ -38,20 +34,37 @@ Graficas con el historial de temperaturas y acciones tomadas.
 - Raspberry Pi 3B+ o Superior
 
 
-# Install
+# Dependencies
 
-## Dependencies
+- python
+- apscheduler
+- ufw
+- fastapi
+- SQLAlchemy
+- APScheduler
+- loguru
+- smbus2
 
-    python pip virtualenv 
+# Install instructions
 
-## Commands to clone and install python dependencies
+Se asume que el usuario **ya cuenta con Raspberry Pi OS Lite** instalado en una Memoria MicroSD de al menos 8Gb Clase 10 y
+que este cuenta con acceso a una sesión en la raspberry como usuario root (se sugiere utilizar SSH).
 
-    git clone https://github.com/brerk/ProyectoFinal_FSEm.git
-    cd ProyectoFinal_FSem
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
+Para instalar este proyecto se cuenta con un script que realiza toda la configuración necesaria de la raspberry pi 4.
+Este descarga el proyecto directamente desde este repositorio, instalas las dependencias a nivel del sistema, crea un
+entorno virtual para ejecutar el invernadero, crea un servicio de systemd e inicializa el proyecto para empezar a servir
+la interfaz web del servidor en el puerto 8000.
 
-    fastapi run server.py
+Para instalar y configurar las dependencias:
 
-In a browser open: `localhost:8000`
+    sudo su
+    cd /home/pi
+    wget https://raw.githubusercontent.com/brerk/ProyectoFinal_FSEm/main/install.sh
+    chmod +x install.sh
+    ./install.sh
+
+Reiniciar las raspberry pi:
+
+    reboot
+
+Para acceder a la interfaz web basta con entrar en 🌐 `localhost:8000`. El servidor escucha tambien en la interfaz wlan0, por lo que esta interfaz tambien es accessible desde otros dispositivos conectados a la misma red.
