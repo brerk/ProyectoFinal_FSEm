@@ -37,7 +37,10 @@ modprobe w1-therm
 echo "Connected 1-wire devices."
 ls sys/bus/w1/devices
 
+echo "Firewall configuration..."
+ufw allow ssh
 ufw allow 8000 comment "invernadero web interface"
+ufw enable
 
 echo "Proyect Installation..."
 
