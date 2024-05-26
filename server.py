@@ -29,6 +29,7 @@ from datetime import datetime
 
 from models.RiegoModel import RiegoConfig
 from utils.PID import PID
+from utils.i2c_master import i2c_handler
 
 # CONSTANTS
 from utils.database import db
@@ -37,8 +38,8 @@ from utils.Graphs import create_temps_graph
 # from utils.BombaAgua import wp
 # from utils.Ventilador import fan
 
+
 # from utils.DS18B20_Sensor import S0, S1
-from utils.PID import PID
 
 scheduler = AsyncIOScheduler(timezone="America/Mexico_City")
 
@@ -189,22 +190,34 @@ def init_routine():
         MIN_TEMP = temps[0]["min_temp"]
         MAX_TEMP = temps[0]["max_temp"]
 
-    # TODO: Load routines to scheduler
-    # Create graphs
-
     s0_temps = db.get_temperatures(0)
-    s1_temps = db.get_temperatures(0)
+    s1_temps = db.get_temperatures(1)
 
-    # TODO: Limit to a range of rows
     create_temps_graph(s0_temps, s1_temps)
+
+    tasks = db.get_irrigation_tasks()
+    if tasks:
+        for task in tasks:
+            hour, minute = task.time.split(":")
+            scheduler.add_job(
+                start_irrigation_routine,
+                "cron",
+                hour=int(hour),
+                minute=int(minute),
+                id=f"irrigation_task_{task.id}",
+                args=(
+                    task.time,
+                    task.duration,
+                    task.min_temp,
+                    task.max_temp,
+                ),
+            )
 
 
 def get_existing_tasks() -> List[RiegoConfig]:
     """
-    Load existing tasks from DataBase.
+    Retrieve existing tasks from DataBase.
     """
-    # TODO: Load data from database
-
     tasks = db.get_irrigation_tasks()
 
     return tasks
@@ -327,12 +340,11 @@ def measure_temps():
     """
     Read temperature from S0 y S0 and write to db.
     """
-    # TODO: uncomment when 1Wire sensors are connected
-    # s0_temp = S0.read_temp()
-    # s1_temp = S1.read_temp()
+    # s0_temp = i2c_handler.read_temp_from_i2c(0)
+    # s1_temp = i2c_handler.read_temp_from_i2c(1)
 
     s0_temp = 23.1
-    s1_temp = 23.4
+    s1_temp = 23.2
 
     db.add_temperature_record(sensor_id=0, temp=s0_temp)
     db.add_temperature_record(sensor_id=1, temp=s1_temp)
