@@ -25,7 +25,6 @@ import time
 
 from loguru import logger
 from typing import Annotated, List
-from datetime import datetime
 
 from models.RiegoModel import RiegoConfig
 from utils.PID import PID
@@ -34,12 +33,10 @@ from utils.i2c_master import i2c_handler
 # CONSTANTS
 from utils.database import db
 from utils.Graphs import create_temps_graph
+from utils.LN298 import motors
 
 # from utils.BombaAgua import wp
 # from utils.Ventilador import fan
-
-
-# from utils.DS18B20_Sensor import S0, S1
 
 scheduler = AsyncIOScheduler(timezone="America/Mexico_City")
 
@@ -99,7 +96,7 @@ def handle_fan_power_change(control: FanSpeed):
 
     FAN_SPEED = control.value
 
-    # TODO: save to database
+    motors.set_fan_speed(FAN_SPEED)
 
     return {"fan_speed": FAN_SPEED}
 
@@ -255,14 +252,12 @@ def get_current_temp() -> float:
 
     # TODO: Pull data from sensors
 
-    # temp_prom = S0.read_temp()
-    # temp_prom += S1.read_temp()
-    #
-    # temp_prom /= 2
-    #
-    # return temp_prom
+    s0_temp = i2c_handler.read_temp_from_i2c(0)
+    s1_temp = i2c_handler.read_temp_from_i2c(1)
 
-    return 28.3
+    temp_prom = (s0_temp + s1_temp)/2
+
+    return temp_prom
 
 
 def start_irrigation_routine(
@@ -279,16 +274,16 @@ def start_irrigation_routine(
         )
         return
 
-    wp.turn_on()
+    motors.motor_on("pump")
     logger.info("Started irrigation routine.")
 
     time.sleep(duration)
 
-    wp.turn_off()
+    motors.motor_off("pump")
     logger.info("Irrigation routine is done.")
 
 
-@scheduler.scheduled_job("cron", second="*/15")
+# @scheduler.scheduled_job("cron", second="*/15")
 def control_light():
     """
     Adjust light power using the PID
@@ -340,11 +335,12 @@ def measure_temps():
     """
     Read temperature from S0 y S0 and write to db.
     """
-    # s0_temp = i2c_handler.read_temp_from_i2c(0)
-    # s1_temp = i2c_handler.read_temp_from_i2c(1)
 
-    s0_temp = 23.1
-    s1_temp = 23.2
+    s0_temp = i2c_handler.read_temp_from_i2c(0)
+    s1_temp = i2c_handler.read_temp_from_i2c(1)
+
+    # s0_temp = 23.1
+    # s1_temp = 23.2
 
     db.add_temperature_record(sensor_id=0, temp=s0_temp)
     db.add_temperature_record(sensor_id=1, temp=s1_temp)
