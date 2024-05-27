@@ -96,6 +96,7 @@ def handle_fan_power_change(control: FanSpeed):
 
     FAN_SPEED = control.value
 
+    motors.motor_on("fan")
     motors.set_fan_speed(FAN_SPEED)
 
     return {"fan_speed": FAN_SPEED}
