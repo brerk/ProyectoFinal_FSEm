@@ -257,7 +257,8 @@ def get_current_temp() -> float:
 
     temp_prom = (s0_temp + s1_temp)/2
 
-    return temp_prom
+    # return temp_prom
+    return None
 
 
 def start_irrigation_routine(
