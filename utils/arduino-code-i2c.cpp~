@@ -48,9 +48,12 @@ void setup(void){
 	// Configure the handler for request of data via I2C
 	Wire.onRequest(i2c_request_handler);
 
+	// Configure ADC to use voltage reference from AREF pin (external)
+	analogReference(EXTERNAL):
+
 	// Setup the serial port to operate at 56.6kbps
-	// Serial.begin(9600);
-	Serial.begin(56600);
+	Serial.begin(9600);
+	// Serial.begin(56600);
 
 	// Setup board led
 	pinMode(BOARD_LED, OUTPUT);
@@ -119,15 +122,11 @@ void i2c_received_handler(int count){
 */
 float read_temp(int sensor_id){
 	if (sensor_id == 0) {
-		// TODO: Change 0 to sensor pin
-		// The actual temperature
 		int vplus  = analogRead(0);
-
 		// The reference temperature value, i.e. 0°C
 		int vminus = analogRead(1);
 	} else if (sensor_id == 1) {
 		int vplus  = analogRead(2);
-
 		// The reference temperature value, i.e. 0°C
 		int vminus = analogRead(3);
 	}
@@ -139,9 +138,29 @@ float read_temp(int sensor_id){
 	return vdiff * VAREF / 10.24f;
 }
 
+/**
+* Gets the average of N temperature reads
+*/
+float read_avg_temp(int count, int sensor_id){
+	float avgtemp = 0;
+	for(int i = 0; i < count; ++i)
+		avgtemp += read_temp(sensor_id);
+
+	return avgtemp / count;
+}
+
+
+
 void loop(){
-	s0_temperature = read_temp(0);
-	s1_temperature = read_temp(1);
+	s0_temperature = read_avg_temp(0);
+	s1_temperature = read_avg_temp(1);
+
+	Serial.print("Sensor 0 --> ");
+	Serial.print(s0_temperature);
+
+	Serial.print("Sensor 1 --> ");
+	Serial.print(s1_temperature);
+
 
 	delay(100);
 }
