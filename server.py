@@ -24,7 +24,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import time
 
 from loguru import logger
-from typing import Annotated, List
+from typing import Annotated, List, Union
 
 from models.RiegoModel import RiegoConfig
 from utils.PID import PID
@@ -212,13 +212,17 @@ def init_routine():
             )
 
 
-def get_existing_tasks() -> List[RiegoConfig]:
+def get_existing_tasks() -> Union[List[RiegoConfig], None]:
     """
     Retrieve existing tasks from DataBase.
     """
     tasks = db.get_irrigation_tasks()
 
-    return tasks
+    if tasks:
+        return tasks
+    else:
+        return None
+
 
 
 def get_template(request, name: str):
@@ -246,20 +250,20 @@ def get_template(request, name: str):
             return None
 
 
-def get_current_temp() -> float:
+def get_current_temp() -> Union[float, None]:
     """
     Return prom of s0 + s1
     """
-
-    # TODO: Pull data from sensors
-
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
 
-    # temp_prom = (s0_temp + s1_temp)/2
+    if s0_temp and s1_temp:
+        temp_prom = (s0_temp + s1_temp)/2
 
-    # return temp_prom
-    return None
+        return temp_prom
+    else:
+        logger.warning("An error ocurreded while reading sensors.")
+        return None
 
 
 def start_irrigation_routine(
@@ -323,7 +327,15 @@ def control_light():
 @scheduler.scheduled_job("cron", second="*/15")
 def generat_graphs():
     s0_temps = db.get_temperatures(0)
-    s1_temps = db.get_temperatures(0)
+    s1_temps = db.get_temperatures(1)
+
+    if not s0_temps:
+        logger.warning(f"No mesaurements saved for {s0_temps=}")
+        return
+
+    if not s1_temps:
+        logger.warning(f"No mesaurements saved for {s1_temps=}")
+        return
 
     create_temps_graph(s0_temps, s1_temps)
 
@@ -340,6 +352,10 @@ def measure_temps():
 
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
+
+    if not s0_temp or not s1_temp:
+        logger.warning(f"An error ocurred while reading temps from I2C: {s0_temp=} {s1_temp=}, skip measurement...")
+        return
 
     # s0_temp = 23.1
     # s1_temp = 23.2
