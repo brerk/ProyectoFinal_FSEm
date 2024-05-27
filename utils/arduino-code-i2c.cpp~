@@ -1,5 +1,5 @@
 // Arduino I2C handler: Control a light power, fan power, water pump state on/off and 2 analogic sensors.
-// Copyright (C) 2024  Erik Bravo
+// Copyright (C) 2024  Ivan Martinez,Erik Bravo
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ float pumpPower = 0;
 
 float s0_temperature = 0;
 float s1_temperature = 0;
-bye readFromSensor = 0xFF;
+byte readFromSensor = 0xFF;
 
 // Prototypes
 void i2c_received_handler(int count);
@@ -49,7 +49,7 @@ void setup(void){
 	Wire.onRequest(i2c_request_handler);
 
 	// Configure ADC to use voltage reference from AREF pin (external)
-	analogReference(EXTERNAL):
+	analogReference(EXTERNAL);
 
 	// Setup the serial port to operate at 56.6kbps
 	Serial.begin(9600);
@@ -84,9 +84,9 @@ void i2c_request_handler(){
 */
 void i2c_received_handler(int count){
 	if (count == 1) {
-		readFromSensor = Wire.read()
+		readFromSensor = Wire.read();
 	} else if (count == 5) {
-		byte device_code = Wire.read()
+		byte device_code = Wire.read();
 
 		union {
 			byte b[4];
@@ -121,14 +121,16 @@ void i2c_received_handler(int count){
 * Reads temperature in C from the ADC
 */
 float read_temp(int sensor_id){
+  int vplus;
+  int vminus;
 	if (sensor_id == 0) {
-		int vplus  = analogRead(0);
+		vplus  = analogRead(0);
 		// The reference temperature value, i.e. 0°C
-		int vminus = analogRead(1);
+		vminus = analogRead(1);
 	} else if (sensor_id == 1) {
-		int vplus  = analogRead(2);
+		vplus  = analogRead(2);
 		// The reference temperature value, i.e. 0°C
-		int vminus = analogRead(3);
+		vminus = analogRead(3);
 	}
 
 	// Calculate the difference. when V+ is smaller than V- we have negative temp
@@ -152,14 +154,14 @@ float read_avg_temp(int count, int sensor_id){
 
 
 void loop(){
-	s0_temperature = read_avg_temp(0);
-	s1_temperature = read_avg_temp(1);
+	s0_temperature = read_temp(0);
+	s1_temperature = read_temp(1);
 
 	Serial.print("Sensor 0 --> ");
-	Serial.print(s0_temperature);
+	Serial.println(s0_temperature);
 
 	Serial.print("Sensor 1 --> ");
-	Serial.print(s1_temperature);
+	Serial.println(s1_temperature);
 
 
 	delay(100);
