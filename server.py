@@ -257,7 +257,7 @@ def get_template(request, name: str):
                 context={
                     "fan_speed": FAN_SPEED,
                     "light_percentage": LIGHT_PWR,
-                    "existing_task": get_existing_tasks(),
+                    "existing_task": get_existing_tasks() or [],
                     "curr_min_temp": MIN_TEMP,
                     "curr_max_temp": MAX_TEMP,
                     "wanted_temp": DESIRED_TEMP,
