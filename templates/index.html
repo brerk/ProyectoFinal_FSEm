@@ -95,6 +95,29 @@
 
             <input type="submit" value="Add">
         </form>
+
+
+        <h2>Configuracion del PID</h2>
+        <form class="pid_setter" action="pid_control" method="POST" id="pid-form">
+
+            <label for="kp">Kp: </label>
+            <input type="number" min="0" max="3600" id="kp" name="kp_constant">
+            <br>
+
+            <label for="ki">Ki: (0.1Kp) </label>
+            <input type="number" min="0" max="3600" id="ki" name="ki_constant">
+            <br>
+
+            <label for="kd">Kd (0.1Ki):</label>
+            <input type="number" min="0" max="3600" id="kd" name="kd_constant">
+            <br>
+
+
+            <input type="submit" value="Set">
+        </form>
+
+
+
     </div>
 
     </div>

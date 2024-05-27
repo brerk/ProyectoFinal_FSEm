@@ -73,3 +73,8 @@ class I2C_Handler:
 
 
 i2c_handler = I2C_Handler()
+
+if __name__ == "__main__":
+    while True:
+        i2c_handler.read_temp_from_i2c(0)
+        input("press enter to continue")

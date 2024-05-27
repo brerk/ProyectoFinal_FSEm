@@ -156,7 +156,6 @@ def handle_wanted_temp(
 ):
     global DESIRED_TEMP
 
-    print(f"Wanted temp: {wanted_temp}")
     DESIRED_TEMP = wanted_temp
 
     response = RedirectResponse(url="/")
@@ -378,9 +377,6 @@ def measure_temps():
     if not s0_temp or not s1_temp:
         logger.warning(f"An error ocurred while reading temps from I2C: {s0_temp=} {s1_temp=}, skip measurement...")
         return
-
-    # s0_temp = 23.1
-    # s1_temp = 23.2
 
     db.add_temperature_record(sensor_id=0, temp=s0_temp)
     db.add_temperature_record(sensor_id=1, temp=s1_temp)
