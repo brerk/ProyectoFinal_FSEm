@@ -35,9 +35,6 @@ from utils.database import db
 from utils.Graphs import create_temps_graph
 from utils.LN298 import motors
 
-# from utils.BombaAgua import wp
-# from utils.Ventilador import fan
-
 scheduler = AsyncIOScheduler(timezone="America/Mexico_City")
 
 app = FastAPI()
@@ -59,6 +56,12 @@ MIN_TEMP = 20
 MAX_TEMP = 25
 
 DESIRED_TEMP = 25
+
+PID_CONSTANTS = {
+    "kp": 0.0,
+    "ki": 0.0,
+    "kd": 0.0,
+}
 
 
 @app.post("/control_light")
@@ -135,8 +138,6 @@ def handle_temps_config(
     global MIN_TEMP
     global MAX_TEMP
 
-    print(f"{min_temp=} {max_temp=}")
-
     db.set_temp_limits(min_temp, max_temp)
 
     MIN_TEMP = min_temp
@@ -162,6 +163,25 @@ def handle_wanted_temp(
     response.status_code = status.HTTP_303_SEE_OTHER
 
     return response
+
+@app.post("/pid_control")
+def handle_pid_control(
+    request: Request,
+    kp: Annotated[float, Form()],
+    ki: Annotated[float, Form()],
+    kd: Annotated[float, Form()],
+):
+    global PID_CONSTANTS
+
+    PID_CONSTANTS["kp"] = kp
+    PID_CONSTANTS["ki"] = ki
+    PID_CONSTANTS["kd"] = kd
+
+    response = RedirectResponse(url="/")
+    response.status_code = status.HTTP_303_SEE_OTHER
+
+    return response
+
 
 
 # Always at the end
@@ -273,6 +293,9 @@ def start_irrigation_routine(
     max_temp: float,
 ):
     curr_temp = get_current_temp()
+    if not curr_temp:
+        logger.warning(f"Could not get current_temp to excecute, skipping irrigation routine...")
+        return
 
     if curr_temp < min_temp or curr_temp > max_temp:
         logger.info(
@@ -311,17 +334,16 @@ def control_light():
         oscilaciones rapida, aumenta Kd
         respuesta muy lenta, reduce Kd
     """
-
     # TODO: K constanst can be calculated automatically from measurements
-
-    Kp = 1
-    Ki = 0.1 * Kp
-    Kd = 0.1 * Ki
-
     current_temp = get_current_temp()
 
-    pid_res = PID(Kp, Ki, Kd, DESIRED_TEMP, current_temp)
-    print(f"PID: {pid_res} for {current_temp} --> wanted {DESIRED_TEMP}")
+    if not current_temp:
+        logger.warning(f"Could not get current temp for PID Adjustment, skipping.")
+        return
+
+    pid_res = PID(PID_CONSTANTS["kp"], PID_CONSTANTS["ki"], PID_CONSTANTS["kd"], DESIRED_TEMP, current_temp)
+
+    logger.info(f"PID: Adjust Light power to {pid_res}/100 to reach {DESIRED_TEMP} C")
 
 
 @scheduler.scheduled_job("cron", second="*/15")
