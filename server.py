@@ -373,10 +373,8 @@ def control_light():
 
     if pwr < 0:
         pwr = 0
-        print("reset pwr value")
     elif pwr > 100:
         pwr = 100
-        print("lmitt pwr value to 100")
 
 
     i2c_handler.send_cmd("light", float(pwr))
