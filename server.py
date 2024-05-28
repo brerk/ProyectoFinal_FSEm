@@ -132,7 +132,20 @@ def handle_riego_config(
         max_temp,
     )
 
-    # TODO: Add job to scheduler
+    hour, minute = hourminute.split(":")
+    scheduler.add_job(
+        start_irrigation_routine,
+        "cron",
+        hour=hour,
+        minute=minute,
+        id=f"irrigation_task_new_{hourminute}",
+        args=(
+            hourminute,
+            duration,
+            min_temp,
+            max_temp,
+        ),
+    )
 
     # Don't stay on /riego_form, return to /
     response = RedirectResponse(url="/")
