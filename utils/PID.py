@@ -79,7 +79,7 @@ def PID(Kp, Ki, Kd, setpoint: float, measurement: float, offset=5) -> float:
     print(f"{D=}")
 
     MV = offset + P + I + D
-    print(MV)
+    # print(MV)
     MV = max(0, min(100, MV))
 
     e_prev = e
