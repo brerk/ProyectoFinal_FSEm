@@ -86,7 +86,8 @@ def handle_light_power_change(control: LightControl):
     14000 --> 
     """
 
-    pwr = 1100 + (14000 * (control.value/100))
+    # pwr = 1100 + (14000 * (control.value/100))
+    pwr = 8000 * LIGHT_PWR
 
     print(f"Send: {pwr=}")
 
@@ -384,7 +385,7 @@ def measure_temps():
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
 
-    if not s0_temp or not s1_temp:
+    if s0_temp is None or s1_temp is None:
         logger.warning(f"An error ocurred while reading temps from I2C: {s0_temp=} {s1_temp=}, skip measurement...")
         return
 
@@ -392,8 +393,6 @@ def measure_temps():
     db.add_temperature_record(sensor_id=1, temp=s1_temp)
 
     db.add_log_row("Temp measurement of S0,S1", "Done")
-
-    logger.info("Temps measured")
 
 
 scheduler.start()

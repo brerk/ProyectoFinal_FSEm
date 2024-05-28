@@ -21,9 +21,6 @@ then echo "Script must be run as root. (try sudo su?)"
   exit
 fi
 
-echo "Enable 1-Wire"
-echo "dtoverlay=w1-gpio" >> /boot/firmware/config.txt
-
 echo "Eable I2C mod"
 raspi-config nonint do_i2c 0
 
@@ -31,19 +28,12 @@ echo "Installing system dependencies"
 apt-get install i2c-tools python3-smbus2 python3-pip virtualenv ufw git python3-rpi.gpio -y
 adduser pi i2c
 
-modprobe w1-gpio
-modprobe w1-therm
-
-echo "Connected 1-wire devices."
-ls sys/bus/w1/devices
-
 echo "Firewall configuration..."
 ufw allow ssh
 ufw allow 8000 comment "invernadero web interface"
 ufw enable
 
 echo "Proyect Installation..."
-
 
 cd /home/pi
 git clone https://github.com/brerk/ProyectoFinal_FSEm.git
