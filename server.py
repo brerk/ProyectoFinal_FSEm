@@ -50,7 +50,7 @@ class FanSpeed(BaseModel):
 
 
 LIGHT_PWR = 10
-FAN_SPEED = 50
+FAN_SPEED = 75
 
 MIN_TEMP = 20
 MAX_TEMP = 25
@@ -413,3 +413,6 @@ def measure_temps():
 scheduler.start()
 
 init_routine()
+
+motors.motor_on("fan")
+motors.set_fan_speed(FAN_SPEED)
