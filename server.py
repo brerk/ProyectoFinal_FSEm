@@ -79,7 +79,17 @@ def handle_light_power_change(control: LightControl):
 
     LIGHT_PWR = control.value
 
-    # TODO: save to database
+    """
+    1100 --> 0%
+    15100 --> 100%
+
+    14000 --> 
+    """
+
+    pwr = 1100 + (14000 * control.value)
+    print(f"Send: {pwr=}")
+
+    i2c_handler.send_cmd('light', pwr)
 
     return {"light_power": LIGHT_PWR}
 
@@ -260,7 +270,7 @@ def get_template(request, name: str):
                     "curr_min_temp": MIN_TEMP,
                     "curr_max_temp": MAX_TEMP,
                     "wanted_temp": DESIRED_TEMP,
-                    "curr_temp": get_current_temp(),
+                    "curr_temp": f"{get_current_temp():.3f}",
                     "logs": db.get_logs(10),
                 },
             )
@@ -365,11 +375,12 @@ def generat_graphs():
     logger.info("Graphs updated to ./statics/temps.jpg")
 
 
-@scheduler.scheduled_job("cron", second="*/5")
+@scheduler.scheduled_job("cron", second="*/1")
 def measure_temps():
     """
     Read temperature from S0 y S0 and write to db.
     """
+    print("reading temps")
 
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
