@@ -58,9 +58,9 @@ MAX_TEMP = 25
 DESIRED_TEMP = 25
 
 PID_CONSTANTS = {
-    "kp": 0.0,
-    "ki": 0.0,
-    "kd": 0.0,
+    "kp": 1.0,
+    "ki": 1*0.1,
+    "kd": 1*0.1*0.1,
 }
 
 
@@ -323,7 +323,7 @@ def start_irrigation_routine(
     logger.info("Irrigation routine is done.")
 
 
-# @scheduler.scheduled_job("cron", second="*/15")
+@scheduler.scheduled_job("cron", second="*/15")
 def control_light():
     """
     Adjust light power using the PID
@@ -345,11 +345,10 @@ def control_light():
         oscilaciones rapida, aumenta Kd
         respuesta muy lenta, reduce Kd
     """
-    # TODO: K constanst can be calculated automatically from measurements
     current_temp = get_current_temp()
 
     if not current_temp:
-        logger.warning(f"Could not get current temp for PID Adjustment, skipping.")
+        logger.warning("Could not get current temp for PID Adjustment, skipping.")
         return
 
     pid_res = PID(PID_CONSTANTS["kp"], PID_CONSTANTS["ki"], PID_CONSTANTS["kd"], DESIRED_TEMP, current_temp)
