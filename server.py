@@ -381,8 +381,6 @@ def measure_temps():
     """
     Read temperature from S0 y S0 and write to db.
     """
-    print("reading temps")
-
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
 

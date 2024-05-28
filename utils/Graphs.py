@@ -46,3 +46,5 @@ def create_temps_graph(
     plt.legend()
 
     plt.savefig(output)
+
+    plt.close()
