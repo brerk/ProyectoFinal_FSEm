@@ -363,13 +363,15 @@ def control_light():
 
     if pwr < 0.0:
         pwr = 0.0
+        print("reset pwr value")
     elif pwr > 100.0:
         pwr = 100.0
+        print("lmitt pwr value to 100")
 
 
     i2c_handler.send_cmd("light", pwr)
 
-    logger.info(f"PID: Adjust Light power to {pid_res}/100 to reach {DESIRED_TEMP} C")
+    logger.info(f"PID: Adjust Light power to {pwr}/100 to reach {DESIRED_TEMP} C")
 
 
 @scheduler.scheduled_job("cron", second="*/15")
