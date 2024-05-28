@@ -381,7 +381,7 @@ def control_light():
 
     i2c_handler.send_cmd("light", float(pwr))
 
-    logger.info(f"PID: Adjust Light power to {pwr}/100 to reach {DESIRED_TEMP} C")
+    logger.info(f"PID: Adjust Light power to {pwr}/100 to reach {100-DESIRED_TEMP} C")
 
 
 @scheduler.scheduled_job("cron", second="*/3")
