@@ -285,13 +285,21 @@ def get_template(request, name: str):
         case _:
             return None
 
+S0_TEMP = 0
+S1_TEMP = 0
+
 
 def get_current_temp() -> Union[float, None]:
     """
     Return prom of s0 + s1
     """
-    s0_temp = i2c_handler.read_temp_from_i2c(0)
-    s1_temp = i2c_handler.read_temp_from_i2c(1)
+    global S0_TEMP, S1_TEMP
+
+    # s0_temp = i2c_handler.read_temp_from_i2c(0)
+    # s1_temp = i2c_handler.read_temp_from_i2c(1)
+
+    s0_temp = S0_TEMP 
+    s1_temp = S1_TEMP 
 
     print(f"{s0_temp=} {s1_temp=}")
 
@@ -401,8 +409,14 @@ def measure_temps():
     """
     Read temperature from S0 y S0 and write to db.
     """
+
+    global S0_TEMP, S1_TEMP
+
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
+
+    S0_TEMP = s0_temp
+    S1_TEMP = s1_temp
 
     if s0_temp is None or s1_temp is None or s1_temp == 0 or s0_temp ==0:  
         logger.warning(f"An error ocurred while reading temps from I2C: {s0_temp=} {s1_temp=}, skip measurement...")
