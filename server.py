@@ -293,6 +293,8 @@ def get_current_temp() -> Union[float, None]:
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
 
+    print(f"{s0_temp=} {s1_temp=}")
+
     if s0_temp and s1_temp:
         temp_prom = (s0_temp + s1_temp)/2
 
