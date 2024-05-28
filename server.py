@@ -20,7 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 from loguru import logger
@@ -35,7 +35,7 @@ from utils.database import db
 from utils.Graphs import create_temps_graph
 from utils.LN298 import motors
 
-scheduler = AsyncIOScheduler(timezone="America/Mexico_City")
+scheduler = BackgroundScheduler(timezone="America/Mexico_City")
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
