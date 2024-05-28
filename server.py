@@ -361,15 +361,15 @@ def control_light():
 
     pwr = (8000 * pid_res) / 100
 
-    if pwr < 0.0:
-        pwr = 0.0
+    if pwr < 0:
+        pwr = 0
         print("reset pwr value")
-    elif pwr > 100.0:
-        pwr = 100.0
+    elif pwr > 100:
+        pwr = 100
         print("lmitt pwr value to 100")
 
 
-    i2c_handler.send_cmd("light", pwr)
+    i2c_handler.send_cmd("light", float(pwr))
 
     logger.info(f"PID: Adjust Light power to {pwr}/100 to reach {DESIRED_TEMP} C")
 
