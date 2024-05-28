@@ -87,7 +87,7 @@ def handle_light_power_change(control: LightControl):
     """
 
     # pwr = 1100 + (14000 * (control.value/100))
-    pwr = 8000 * LIGHT_PWR
+    pwr = (8000 * LIGHT_PWR) / 100
 
     print(f"Send: {pwr=}")
 
