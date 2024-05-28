@@ -79,14 +79,6 @@ def handle_light_power_change(control: LightControl):
 
     LIGHT_PWR = control.value
 
-    """
-    1100 --> 0%
-    15100 --> 100%
-
-    14000 --> 
-    """
-
-    # pwr = 1100 + (14000 * (control.value/100))
     pwr = (8000 * LIGHT_PWR) / 100
 
     print(f"Send: {pwr=}")
@@ -336,7 +328,7 @@ def start_irrigation_routine(
     logger.info("Irrigation routine is done.")
 
 
-@scheduler.scheduled_job("cron", second="*/15")
+@scheduler.scheduled_job("cron", second="*/2")
 def control_light():
     """
     Adjust light power using the PID
@@ -365,6 +357,11 @@ def control_light():
         return
 
     pid_res = PID(PID_CONSTANTS["kp"], PID_CONSTANTS["ki"], PID_CONSTANTS["kd"], DESIRED_TEMP, current_temp)
+
+
+    pwr = (8000 * pid_res) / 100
+
+    i2c_handler.send_cmd("light", pwr)
 
     logger.info(f"PID: Adjust Light power to {pid_res}/100 to reach {DESIRED_TEMP} C")
 
