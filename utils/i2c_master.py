@@ -60,7 +60,7 @@ class I2C_Handler:
 
         device_id = devices_id.get(device, None)
 
-        if not device_id:
+        if device_id is None:
             print(f"Device: {device} is not valid.")
             return
 
