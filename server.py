@@ -384,7 +384,7 @@ def control_light():
     logger.info(f"PID: Adjust Light power to {pwr}/100 to reach {DESIRED_TEMP} C")
 
 
-@scheduler.scheduled_job("cron", second="*/15")
+@scheduler.scheduled_job("cron", second="*/3")
 def generate_graphs():
     s0_temps = db.get_temperatures(0)
     s1_temps = db.get_temperatures(1)
