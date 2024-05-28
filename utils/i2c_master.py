@@ -50,7 +50,7 @@ class I2C_Handler:
             logger.warning(f"An error ocurred while reading from i2c slave: {ex}")
             return None
 
-    def send_cmd(self, device, value) -> None:
+    def send_cmd(self, device: str, value) -> None:
         """
         Send a change of value for light, fan or pump.
 
@@ -61,7 +61,7 @@ class I2C_Handler:
         device_id = devices_id.get(device, None)
 
         if not device_id:
-            print(f"Devide: {device} is not valid.")
+            print(f"Device: {device} is not valid.")
             return
 
         try:

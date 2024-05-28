@@ -89,7 +89,7 @@ def handle_light_power_change(control: LightControl):
     pwr = 1100 + (14000 * control.value)
     print(f"Send: {pwr=}")
 
-    i2c_handler.send_cmd('light', pwr)
+    i2c_handler.send_cmd("light", pwr)
 
     return {"light_power": LIGHT_PWR}
 
@@ -393,6 +393,7 @@ def measure_temps():
     db.add_temperature_record(sensor_id=1, temp=s1_temp)
 
     db.add_log_row("Temp measurement of S0,S1", "Done")
+
     logger.info("Temps measured")
 
 
