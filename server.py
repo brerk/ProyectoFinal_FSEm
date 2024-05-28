@@ -404,7 +404,7 @@ def measure_temps():
     s0_temp = i2c_handler.read_temp_from_i2c(0)
     s1_temp = i2c_handler.read_temp_from_i2c(1)
 
-    if s0_temp is None or s1_temp is None:
+    if s0_temp is None or s1_temp is None or s1_temp == 0 or s0_temp ==0:  
         logger.warning(f"An error ocurred while reading temps from I2C: {s0_temp=} {s1_temp=}, skip measurement...")
         return
 
