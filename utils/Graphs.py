@@ -42,6 +42,8 @@ def create_temps_graph(
     plt.xlabel("HH:MM:SS")
     plt.ylabel("°Celsius")
 
+    plt.ylim(-5, 40)
+
     plt.grid()
     plt.legend()
 
