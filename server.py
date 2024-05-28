@@ -86,7 +86,8 @@ def handle_light_power_change(control: LightControl):
     14000 --> 
     """
 
-    pwr = 1100 + (14000 * control.value)
+    pwr = 1100 + (14000 * (control.value/100))
+
     print(f"Send: {pwr=}")
 
     i2c_handler.send_cmd("light", pwr)
@@ -356,7 +357,7 @@ def control_light():
 
 
 @scheduler.scheduled_job("cron", second="*/15")
-def generat_graphs():
+def generate_graphs():
     s0_temps = db.get_temperatures(0)
     s1_temps = db.get_temperatures(1)
 
