@@ -369,7 +369,7 @@ def control_light():
     pid_res = PID(PID_CONSTANTS["kp"], PID_CONSTANTS["ki"], PID_CONSTANTS["kd"], DESIRED_TEMP, current_temp)
 
 
-    pwr = (8000 * pid_res) / 100
+    pwr = 8000 - ((8000 * pid_res) / 100)
 
     if pwr < 0:
         pwr = 0
