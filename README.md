@@ -1,22 +1,4 @@
-# ProyectoFinal_FSEm - Monitoreo y administración remota de un invernadero
-
-TODO: 
-
-1. Encendido y apagado de sistema de irrigación.
-2. Desplegado de gráfica con historico de temperatura, irrigación y acciones tomadas.
-3. Control de temperatura del invernadero utilizando PID.
-X 4. Control de potencia del radiador (foco incandecente).
-X 5. Control de potencia de ventilador. X
-6. Programado de ciclos de temperatura e irrigado.
-X 7. Servidor web para control.
-
-
-buildroot iso
-
-2 sensores de temperatura 
-foco enciende cuando la temperatura es baja
-ventilador lo contrario, bruh
-sistema de irrigación: bomba de agua de baja potencia
+# ProyectoFinal_FSEm - Proyecto Final - Invernadero Inteligente
 
 
 ## Material

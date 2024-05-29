@@ -28,12 +28,14 @@ from typing import Annotated, List, Union
 
 from models.RiegoModel import RiegoConfig
 from utils.PID import PID
-from utils.i2c_master import i2c_handler
+
+# from utils.i2c_master import i2c_handler
 
 # CONSTANTS
 from utils.database import db
 from utils.Graphs import create_temps_graph
-from utils.LN298 import motors
+
+# from utils.LN298 import motors
 
 scheduler = BackgroundScheduler(timezone="America/Mexico_City")
 
@@ -49,6 +51,7 @@ class FanSpeed(BaseModel):
     value: int
 
 
+# CONSTANTS
 LIGHT_PWR = 10
 FAN_SPEED = 75
 
@@ -57,10 +60,13 @@ MAX_TEMP = 25
 
 DESIRED_TEMP = 25
 
+S0_TEMP = 0
+S1_TEMP = 0
+
 PID_CONSTANTS = {
     "kp": 1.0,
-    "ki": 1*0.1,
-    "kd": 1*0.1*0.1,
+    "ki": 1 * 0.1,
+    "kd": 1 * 0.1 * 0.1,
 }
 
 
@@ -83,7 +89,7 @@ def handle_light_power_change(control: LightControl):
 
     print(f"Send: {pwr=}")
 
-    i2c_handler.send_cmd("light", pwr)
+    # i2c_handler.send_cmd("light", pwr)
 
     return {"light_power": LIGHT_PWR}
 
@@ -103,8 +109,8 @@ def handle_fan_power_change(control: FanSpeed):
 
     FAN_SPEED = control.value
 
-    motors.motor_on("fan")
-    motors.set_fan_speed(FAN_SPEED)
+    # motors.motor_on("fan")
+    # motors.set_fan_speed(FAN_SPEED)
 
     return {"fan_speed": FAN_SPEED}
 
@@ -180,6 +186,7 @@ def handle_wanted_temp(
 
     return response
 
+
 @app.post("/pid_control")
 def handle_pid_control(
     request: Request,
@@ -197,7 +204,6 @@ def handle_pid_control(
     response.status_code = status.HTTP_303_SEE_OTHER
 
     return response
-
 
 
 # Always at the end
@@ -260,7 +266,6 @@ def get_existing_tasks() -> Union[List[RiegoConfig], None]:
         return None
 
 
-
 def get_template(request, name: str):
     """
     Get jinja2 template
@@ -285,9 +290,6 @@ def get_template(request, name: str):
         case _:
             return None
 
-S0_TEMP = 0
-S1_TEMP = 0
-
 
 def get_current_temp() -> Union[float, None]:
     """
@@ -295,16 +297,13 @@ def get_current_temp() -> Union[float, None]:
     """
     global S0_TEMP, S1_TEMP
 
-    # s0_temp = i2c_handler.read_temp_from_i2c(0)
-    # s1_temp = i2c_handler.read_temp_from_i2c(1)
-
-    s0_temp = S0_TEMP 
-    s1_temp = S1_TEMP 
+    s0_temp = S0_TEMP
+    s1_temp = S1_TEMP
 
     print(f"{s0_temp=} {s1_temp=}")
 
     if s0_temp and s1_temp:
-        temp_prom = (s0_temp + s1_temp)/2
+        temp_prom = (s0_temp + s1_temp) / 2
 
         return temp_prom
     else:
@@ -320,7 +319,9 @@ def start_irrigation_routine(
 ):
     curr_temp = get_current_temp()
     if not curr_temp:
-        logger.warning(f"Could not get current_temp to excecute, skipping irrigation routine...")
+        logger.warning(
+            "Could not get current_temp to excecute, skipping irrigation routine..."
+        )
         return
 
     if curr_temp < min_temp or curr_temp > max_temp:
@@ -329,20 +330,19 @@ def start_irrigation_routine(
         )
         return
 
-    motors.motor_on("pump")
+    # motors.motor_on("pump")
     logger.info("Started irrigation routine.")
 
     time.sleep(duration)
 
-    motors.motor_off("pump")
+    # motors.motor_off("pump")
     logger.info("Irrigation routine is done.")
 
 
 @scheduler.scheduled_job("cron", second="*/2")
 def control_light():
     """
-    Adjust light power using the PID
-
+    Adjust light power using a PID Driver.
     """
 
     """
@@ -366,8 +366,13 @@ def control_light():
         logger.warning("Could not get current temp for PID Adjustment, skipping.")
         return
 
-    pid_res = PID(PID_CONSTANTS["kp"], PID_CONSTANTS["ki"], PID_CONSTANTS["kd"], DESIRED_TEMP, current_temp)
-
+    pid_res = PID(
+        PID_CONSTANTS["kp"],
+        PID_CONSTANTS["ki"],
+        PID_CONSTANTS["kd"],
+        DESIRED_TEMP,
+        current_temp,
+    )
 
     pwr = 8000 - ((8000 * pid_res) / 100)
 
@@ -376,14 +381,16 @@ def control_light():
     elif pwr > 100:
         pwr = 100
 
-
-    i2c_handler.send_cmd("light", float(pwr))
+    # i2c_handler.send_cmd("light", float(pwr))
 
     logger.info(f"PID: Adjust Light power to {100-pwr}/100 to reach {DESIRED_TEMP} C")
 
 
 @scheduler.scheduled_job("cron", second="*/3")
 def generate_graphs():
+    """
+    Generate a new graph by using the temps stored in db, creating 3 lines, s0, s1, and s_prom
+    """
     s0_temps = db.get_temperatures(0)
     s1_temps = db.get_temperatures(1)
 
@@ -410,14 +417,16 @@ def measure_temps():
 
     global S0_TEMP, S1_TEMP
 
-    s0_temp = i2c_handler.read_temp_from_i2c(0)
-    s1_temp = i2c_handler.read_temp_from_i2c(1)
+    s0_temp = 24.1
+    s1_temp = 23.1
 
     S0_TEMP = s0_temp
     S1_TEMP = s1_temp
 
-    if s0_temp is None or s1_temp is None or s1_temp == 0 or s0_temp ==0:  
-        logger.warning(f"An error ocurred while reading temps from I2C: {s0_temp=} {s1_temp=}, skip measurement...")
+    if s0_temp is None or s1_temp is None or s1_temp == 0 or s0_temp == 0:
+        logger.warning(
+            f"An error ocurred while reading temps from I2C: {s0_temp=} {s1_temp=}, skip measurement..."
+        )
         return
 
     db.add_temperature_record(sensor_id=0, temp=s0_temp)
@@ -426,9 +435,9 @@ def measure_temps():
     db.add_log_row("Temp measurement of S0,S1", "Done")
 
 
+init_routine()
 scheduler.start()
 
-init_routine()
-
-motors.motor_on("fan")
-motors.set_fan_speed(FAN_SPEED)
+# Enable Fan
+# motors.motor_on("fan")
+# motors.set_fan_speed(FAN_SPEED)
